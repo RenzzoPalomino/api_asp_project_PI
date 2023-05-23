@@ -9,6 +9,8 @@ using Microsoft.Data.SqlClient;
 using System.Data;
 using System.Collections.Generic;
 
+using System.Web;
+
 
 namespace api_asp_project_PI.Controllers
 {
@@ -16,14 +18,16 @@ namespace api_asp_project_PI.Controllers
     [Route("[Controller]")]
     public class ProductoController : Controller
     {
-        #region Cadena-De-Conexion
+        #region Cadena de Conexion
         string cadena = @"Server=tcp:asp-project-pi.database.windows.net,1433;Initial Catalog=bd_sis_superm_dswi;Persist Security Info=False;User ID=asp-pi-admin;Password=2423Project#Password;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
         #endregion
+
+        #region metodos de acceso a datos
 
         IEnumerable<Producto> getProducto()
         {
             List<Producto> products = new List<Producto>();
-            using(SqlConnection cn = new SqlConnection(cadena))
+            using (SqlConnection cn = new SqlConnection(cadena))
             {
                 cn.Open();
                 SqlCommand cmd = new SqlCommand("exec api_listar_productos", cn);
@@ -43,7 +47,7 @@ namespace api_asp_project_PI.Controllers
                     });
                 }
                 cn.Close();
-            }    
+            }
 
 
             return products;
@@ -96,16 +100,15 @@ namespace api_asp_project_PI.Controllers
         {
             return getProducto().Where(c => c.nomCat == nomCat);
         }
-        IEnumerable<Producto> buscarXproveedor(string nomProv)
+
+        IEnumerable<Producto> buscarXprecio(double minimo, double maximo)
         {
-            return getProducto().Where(c => c.nomCat == nomProv);
+            return getProducto().Where(c => ((double)c.preProd) >= minimo && ((double)c.preProd) <= maximo);
         }
 
+        #endregion
 
-        /*------------------------------*/
-
-
-        #region listado_Productos-Categorias-Proveedores
+        #region endpoints
         [HttpGet("productos")]
         public async Task<ActionResult<IEnumerable<Producto>>> productos()
         {
@@ -124,7 +127,7 @@ namespace api_asp_project_PI.Controllers
         {
             return Ok(await Task.Run(() => getProveedor()));
         }
-        #endregion
+        
 
         [HttpGet("buscarXcategoria/{nomCat}")]
         public async Task<ActionResult<Producto>> busquedaCategoria(string nomCat)
@@ -133,12 +136,12 @@ namespace api_asp_project_PI.Controllers
             return Ok(await Task.Run(() => buscarXcategoria(nomCat)));
         }
 
-        [HttpGet("buscarXproveedor/{nomProv}")]
-        public async Task<ActionResult<Producto>> busquedaProveedor(string nomProv)
-        {
-            nomProv = nomProv.ToUpper();
-            return Ok(await Task.Run(() => buscarXproveedor(nomProv)));
-        }
 
+        [HttpGet("buscarXprecio/{minimo}/{maximo}")]
+        public async Task<ActionResult<Producto>> busquedaPrecio(double minimo, double maximo)
+        {
+            return Ok(await Task.Run(()=> buscarXprecio(minimo,maximo)));
+        }
+        #endregion
     }
 }
