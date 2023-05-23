@@ -101,6 +101,11 @@ namespace api_asp_project_PI.Controllers
             return getProducto().Where(c => c.nomCat == nomCat);
         }
 
+        IEnumerable<Producto> buscarXproveedor(string nomProv)
+        {
+            return getProducto().Where(c => c.nomProv == nomProv);
+        }
+
         IEnumerable<Producto> buscarXprecio(double minimo, double maximo)
         {
             return getProducto().Where(c => ((double)c.preProd) >= minimo && ((double)c.preProd) <= maximo);
@@ -133,7 +138,20 @@ namespace api_asp_project_PI.Controllers
         public async Task<ActionResult<Producto>> busquedaCategoria(string nomCat)
         {
             nomCat = nomCat.ToUpper();
+            nomCat = nomCat.Replace("%20"," "); //para los espaciados generados en la uri
+            nomCat = nomCat.Replace("%26","&");
             return Ok(await Task.Run(() => buscarXcategoria(nomCat)));
+        }
+        
+
+        [HttpGet("buscarXproveedor/{nomProv}")]
+        public async Task<ActionResult<Producto>> busquedaProveedor(string nomProv)
+        {
+
+            nomProv = nomProv.ToUpper();
+            nomProv = nomProv.Replace("%20", " ");
+            nomProv = nomProv.Replace("%26", "&");
+            return Ok(await Task.Run(() => buscarXproveedor(nomProv)));
         }
 
 

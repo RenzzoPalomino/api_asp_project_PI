@@ -2,11 +2,13 @@
 {
     public class Categoria
     {
-        public Int32 codCat { get; set; }
-        public string nomCat { get; set; }
-        public Categoria()
-        {
-            nomCat = "";
-        }
+        
+            public Int32 codCat { get; set; }
+            public string nomCat { get; set; }
+            public Categoria()
+            {
+                nomCat = "";
+            }
+        
     }
 }
