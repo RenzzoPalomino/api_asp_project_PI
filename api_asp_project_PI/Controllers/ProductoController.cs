@@ -118,6 +118,7 @@ namespace api_asp_project_PI.Controllers
         public async Task<ActionResult<IEnumerable<Producto>>> productos()
         {
             return Ok(await Task.Run(() => getProducto()));
+
         }
 
 
@@ -140,23 +141,23 @@ namespace api_asp_project_PI.Controllers
             nomCat = nomCat.ToUpper();
             nomCat = nomCat.Replace("%20"," "); //para los espaciados generados en la uri
             nomCat = nomCat.Replace("%26","&"); //para el caracter especial "&"
+            nomCat = nomCat.Replace("%3A", ":");
+            nomCat = nomCat.Replace("%2C", ",");
+            nomCat = nomCat.Replace("%3B", ";");
+            nomCat = nomCat.Replace("%2B", "+");
+            nomCat = nomCat.Replace("%2A", "*");
 
-            /*
-                Coma (,): %2C
-                Dos puntos (:): %3A
-                Punto y coma (;): %3B
-                Signo de más (+): %2B
-                Signo de asterisco (*): %2A
-                Signo de libra (#): %23
-                Signo de porcentaje (%): %25
-                Signo de exclamación (!): %21
-                Signo de dolar ($): %24
-                Signo de apóstrofe ('): %27
-                Signo de paréntesis izquierdo (() : %28
-                Signo de paréntesis derecho ()): %29
-                Signo de guion (-): %2D
-                Signo de guion bajo (_): %5F
-             */
+            nomCat = nomCat.Replace("%23", "#");
+            nomCat = nomCat.Replace("%25", "%");
+            nomCat = nomCat.Replace("%21", "!");
+
+            nomCat = nomCat.Replace("%24", "$");
+            nomCat = nomCat.Replace("%27", "'");
+            nomCat = nomCat.Replace("%28", "(");
+
+            nomCat = nomCat.Replace("%29", ")");
+            nomCat = nomCat.Replace("%2D", "-");
+            nomCat = nomCat.Replace("%5F", "_");
             return Ok(await Task.Run(() => buscarXcategoria(nomCat)));
         }
         
@@ -166,8 +167,26 @@ namespace api_asp_project_PI.Controllers
         {
 
             nomProv = nomProv.ToUpper();
-            nomProv = nomProv.Replace("%20", " ");
-            nomProv = nomProv.Replace("%26", "&");
+            nomProv = nomProv.Replace("%20", " "); //para los espaciados generados en la uri
+            nomProv = nomProv.Replace("%26", "&"); //para el caracter especial "&"
+            nomProv = nomProv.Replace("%3A", ":");
+            nomProv = nomProv.Replace("%2C", ",");
+            nomProv = nomProv.Replace("%3B", ";");
+            nomProv = nomProv.Replace("%2B", "+");
+            nomProv = nomProv.Replace("%2A", "*");
+
+            nomProv = nomProv.Replace("%23", "#");
+            nomProv = nomProv.Replace("%25", "%");
+            nomProv = nomProv.Replace("%21", "!");
+
+            nomProv = nomProv.Replace("%24", "$");
+            nomProv = nomProv.Replace("%27", "'");
+            nomProv = nomProv.Replace("%28", "(");
+
+            nomProv = nomProv.Replace("%29", ")");
+            nomProv = nomProv.Replace("%2D", "-");
+            nomProv = nomProv.Replace("%5F", "_");
+
             return Ok(await Task.Run(() => buscarXproveedor(nomProv)));
         }
 
@@ -178,5 +197,8 @@ namespace api_asp_project_PI.Controllers
             return Ok(await Task.Run(()=> buscarXprecio(minimo,maximo)));
         }
         #endregion
+
+        
+        
     }
 }

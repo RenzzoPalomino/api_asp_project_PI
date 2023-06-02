@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32825.248
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "api_asp_project_PI", "api_asp_project_PI\api_asp_project_PI.csproj", "{0D208B0C-8FB0-447B-BC1A-98C10EC0336A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "api_asp_project_PI", "api_asp_project_PI\api_asp_project_PI.csproj", "{0D208B0C-8FB0-447B-BC1A-98C10EC0336A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test_api_asp_project_PI", "Test_api_asp_project_PI\Test_api_asp_project_PI.csproj", "{86658BE0-3FA2-4018-B16B-336AE2F1E7FB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{0D208B0C-8FB0-447B-BC1A-98C10EC0336A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0D208B0C-8FB0-447B-BC1A-98C10EC0336A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0D208B0C-8FB0-447B-BC1A-98C10EC0336A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{86658BE0-3FA2-4018-B16B-336AE2F1E7FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{86658BE0-3FA2-4018-B16B-336AE2F1E7FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{86658BE0-3FA2-4018-B16B-336AE2F1E7FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{86658BE0-3FA2-4018-B16B-336AE2F1E7FB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
