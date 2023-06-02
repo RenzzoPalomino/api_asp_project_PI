@@ -133,13 +133,30 @@ namespace api_asp_project_PI.Controllers
             return Ok(await Task.Run(() => getProveedor()));
         }
         
-
+        /*---*/
         [HttpGet("buscarXcategoria/{nomCat}")]
         public async Task<ActionResult<Producto>> busquedaCategoria(string nomCat)
         {
             nomCat = nomCat.ToUpper();
             nomCat = nomCat.Replace("%20"," "); //para los espaciados generados en la uri
-            nomCat = nomCat.Replace("%26","&");
+            nomCat = nomCat.Replace("%26","&"); //para el caracter especial "&"
+
+            /*
+                Coma (,): %2C
+                Dos puntos (:): %3A
+                Punto y coma (;): %3B
+                Signo de más (+): %2B
+                Signo de asterisco (*): %2A
+                Signo de libra (#): %23
+                Signo de porcentaje (%): %25
+                Signo de exclamación (!): %21
+                Signo de dolar ($): %24
+                Signo de apóstrofe ('): %27
+                Signo de paréntesis izquierdo (() : %28
+                Signo de paréntesis derecho ()): %29
+                Signo de guion (-): %2D
+                Signo de guion bajo (_): %5F
+             */
             return Ok(await Task.Run(() => buscarXcategoria(nomCat)));
         }
         
