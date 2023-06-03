@@ -216,12 +216,52 @@ namespace Test_api_asp_project_PI
             // Asegurarse de que los productos devueltos corresponden a la categoría buscada
             Assert.True(productos.Any(p => p.nomProv.Equals(proveedor, StringComparison.OrdinalIgnoreCase)), "La lista de productos debe estar vacía para el proveedor indicado.");
         }
-
-
-
         #endregion
 
+        #region PARA LA BUSQUEDA DE PRODUCTOS POR RANGO DE PRECIOS
 
+        //Para productos que se encuentren dentro de un rango coherente al listado
+
+        [Test]
+        public async Task Precios_que_contienen_productos_test()
+        {
+            // Arrange
+            var httpClient = new HttpClient();
+            var precio1 = 20;
+            var precio2 = 40;
+            var url = $"https://api-deploy-pi-2423.azurewebsites.net/Producto/buscarxPrecio/{precio1}/{precio2}";
+
+            // Act
+            var response = await httpClient.GetAsync(url);
+            response.EnsureSuccessStatusCode();
+            var productos = await response.Content.ReadFromJsonAsync<IEnumerable<Producto>>();
+
+            // Assert
+            Assert.IsNotNull(productos, "La lista de productos no debe ser nula.");
+            // Asegurarse de que al menos un producto tiene un precio dentro del rango especificado
+            Assert.IsTrue(productos.Any(p => p.preProd >= precio1 && p.preProd <= precio2), "Al menos un producto debe tener un precio dentro del rango especificado.");
+        }
+
+        //Para productos que NO se encuentren dentro de un rango coherente al listado
+        [Test]
+        public async Task Precios_que_NO_contienen_productos_test()
+        {
+            // Arrange
+            var httpClient = new HttpClient();
+            var precio1 = 900;
+            var precio2 = 950;
+            var url = $"https://api-deploy-pi-2423.azurewebsites.net/Producto/buscarxPrecio/{precio1}/{precio2}";
+
+            // Act
+            var response = await httpClient.GetAsync(url);
+            response.EnsureSuccessStatusCode();
+            var productos = await response.Content.ReadFromJsonAsync<IEnumerable<Producto>>();
+
+            // Asegurarse de que ningun producto tiene un precio dentro del rango especificado
+            Assert.IsFalse(productos.Any(p => p.preProd >= precio1 && p.preProd <= precio2));
+        }
+
+        #endregion
 
     }
 }
