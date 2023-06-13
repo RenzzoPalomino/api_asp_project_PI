@@ -111,6 +111,139 @@ namespace api_asp_project_PI.Controllers
             return getProducto().Where(c => ((double)c.preProd) >= minimo && ((double)c.preProd) <= maximo);
         }
 
+
+
+
+        /*ACTUALIZACION Y ELIMINACION DE DATA*/
+
+        IEnumerable<Producto> getProductoWithLink()
+        {
+            List<Producto> products = new List<Producto>();
+            using (SqlConnection cn = new SqlConnection(cadena))
+            {
+                cn.Open();
+                SqlCommand cmd = new SqlCommand("exec listar_productos", cn);
+                SqlDataReader dr = cmd.ExecuteReader();
+                while (dr.Read())
+                {
+                    products.Add(new Producto()
+                    {
+                        codProd = dr.GetInt32(0),
+                        nomProd = dr.GetString(1),
+                        preProd = dr.GetDecimal(2),
+                        stockProd = dr.GetInt32(3),
+                        codCat = dr.GetInt32(4),
+                        codProv = dr.GetInt32(5),
+
+                        nomCat = dr.GetString(6),
+                        nomProv = dr.GetString(7),
+                        //añadido
+                        link = dr.GetString(8)
+
+                    });
+                }
+                cn.Close();
+            }
+
+
+            return products;
+        }
+
+        IEnumerable<Producto> searchWithCodProv(int codProd)
+        {
+            return getProductoWithLink().Where(c => c.codProd == codProd);
+        }
+
+        string addProducto(Producto reg)
+        {
+            string mensaje = "";
+            using (SqlConnection cn = new SqlConnection(cadena))
+            {
+                cn.Open();
+                try
+                {
+                    SqlCommand cmd = new SqlCommand("usp_insertar_productos", cn);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@nomprod", reg.nomProd.ToUpper());
+                    cmd.Parameters.AddWithValue("@preprod", reg.preProd);
+                    cmd.Parameters.AddWithValue("@stockprod", reg.stockProd);
+                    cmd.Parameters.AddWithValue("@codcat", reg.codCat);
+                    cmd.Parameters.AddWithValue("@codprov", reg.codProv);
+
+                    cmd.ExecuteNonQuery();
+                    mensaje = $"Se ha registrado el producto {reg.nomProd}";
+                }
+                catch (SqlException ex)
+                {
+                    mensaje = ex.Message;
+                }
+                finally
+                {
+                    cn.Close();
+                }
+            }
+
+            return mensaje;
+        }
+
+        string updateProducto(Producto reg)
+        {
+            string mensaje = "";
+            using (SqlConnection cn = new SqlConnection(cadena))
+            {
+                cn.Open();
+                try
+                {
+                    SqlCommand cmd = new SqlCommand("usp_actualiza_productos", cn);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@codpro", reg.codProd);
+                    cmd.Parameters.AddWithValue("@nomprod", reg.nomProd.ToUpper());
+                    cmd.Parameters.AddWithValue("@preprod", reg.preProd);
+                    cmd.Parameters.AddWithValue("@stockprod", reg.stockProd);
+                    cmd.Parameters.AddWithValue("@codcat", reg.codCat);
+                    cmd.Parameters.AddWithValue("@codprov", reg.codProv);
+                    //añadido
+                    cmd.Parameters.AddWithValue("@link", reg.link);
+                    cmd.ExecuteNonQuery();
+                    mensaje = $"Se ha actualizado el producto {reg.nomProd}";
+                }
+                catch (SqlException ex)
+                {
+                    mensaje = ex.Message;
+                }
+                finally
+                {
+                    cn.Close();
+                }
+            }
+            return mensaje;
+        }
+
+        string deleteProducto(int codProd)
+        {
+            string mensaje = "";
+            using (SqlConnection cn = new SqlConnection(cadena))
+            {
+                try
+                {
+                    cn.Open();
+                    SqlCommand cmd = new SqlCommand("usp_eliminar_productos", cn);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@codpro", codProd);
+                    cmd.ExecuteNonQuery();
+
+                    mensaje = $"Se ha eliminado el registro";
+                }
+                catch (Exception e)
+                {
+                    mensaje = e.Message;
+                }
+                return mensaje;
+            }
+        }
+
+
+
         #endregion
 
         #region endpoints
@@ -133,14 +266,14 @@ namespace api_asp_project_PI.Controllers
         {
             return Ok(await Task.Run(() => getProveedor()));
         }
-        
+
         /*---*/
         [HttpGet("buscarXcategoria/{nomCat}")]
         public async Task<ActionResult<Producto>> busquedaCategoria(string nomCat)
         {
             nomCat = nomCat.ToUpper();
-            nomCat = nomCat.Replace("%20"," "); //para los espaciados generados en la uri
-            nomCat = nomCat.Replace("%26","&"); //para el caracter especial "&"
+            nomCat = nomCat.Replace("%20", " "); //para los espaciados generados en la uri
+            nomCat = nomCat.Replace("%26", "&"); //para el caracter especial "&"
             nomCat = nomCat.Replace("%3A", ":");
             nomCat = nomCat.Replace("%2C", ",");
             nomCat = nomCat.Replace("%3B", ";");
@@ -160,7 +293,7 @@ namespace api_asp_project_PI.Controllers
             nomCat = nomCat.Replace("%5F", "_");
             return Ok(await Task.Run(() => buscarXcategoria(nomCat)));
         }
-        
+
 
         [HttpGet("buscarXproveedor/{nomProv}")]
         public async Task<ActionResult<Producto>> busquedaProveedor(string nomProv)
@@ -194,11 +327,58 @@ namespace api_asp_project_PI.Controllers
         [HttpGet("buscarXprecio/{minimo}/{maximo}")]
         public async Task<ActionResult<Producto>> busquedaPrecio(double minimo, double maximo)
         {
-            return Ok(await Task.Run(()=> buscarXprecio(minimo,maximo)));
+            return Ok(await Task.Run(() => buscarXprecio(minimo, maximo)));
         }
+
+
+
         #endregion
 
-        
-        
+
+
+        #region NUEVOS ENDPOINTS
+
+        [HttpGet("productosWL")]
+        public async Task<ActionResult<IEnumerable<Producto>>> prodcuctosWL()
+        {
+            return Ok(await Task.Run(() => getProductoWithLink()));
+        }
+
+        [HttpGet("buscarproducto")]
+        public async Task<ActionResult<Producto>> proveedoresPorCodProd(int codProd)
+        {
+            return Ok(await Task.Run(() => searchWithCodProv(codProd)));
+        }
+
+
+
+        [HttpPost("agregar")]
+        public async Task<ActionResult<string>> agregarProducto(Producto reg)
+        {
+            return Ok(await Task.Run(() => addProducto(reg)));
+            /*
+             * nomCat,
+             * nomProv y
+             * link
+             * son invalidos en este formulario, sin embargo, independiente a lo que se ingrese en el swagger en esos campos, no se tendra en cuenta 
+             */
+        }
+
+
+        [HttpPut("actualizar")]
+        public async Task<ActionResult<string>> actualizarProducto(Producto reg)
+        {
+            return Ok(await Task.Run(() => updateProducto(reg)));
+        }
+
+        [HttpDelete("eliminar")]
+        public async Task<ActionResult<string>> eliminarProducto(int codProd)
+        {
+            return Ok(await Task.Run(() => deleteProducto(codProd)));
+        }
+
+
+        #endregion
+
     }
 }

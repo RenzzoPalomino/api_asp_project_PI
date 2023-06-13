@@ -14,11 +14,15 @@ namespace api_asp_project_PI.Models
 
         [Display(Name = "Proveedor")] public string nomProv { get; set; }
 
+/**/        [Display(Name = "Link de imagen")] public string link { get; set; }
+
         public Producto()
         {
             nomProd = "";
             nomCat = "";
             nomProv = "";
+            /**/
+            link = "";
         }
     }
 }
