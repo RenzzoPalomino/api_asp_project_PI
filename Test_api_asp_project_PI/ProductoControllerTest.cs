@@ -22,7 +22,7 @@ namespace Test_api_asp_project_PI
         }
 
 
-        # region PARA LA OBTENCION PLANA DE DATOS
+        # region PARA LA OBTENCION GENERAL DE DATOS
         [Test]
         public async Task ProductosTest()  //evalua si el api respectivo a Productos tiene contenido
         {
